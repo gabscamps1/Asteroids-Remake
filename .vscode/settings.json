@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Asteroids Remake.sln"
+    "dotnet.defaultSolution": "Asteroids-Remake.sln"
 }
