@@ -1,48 +1,63 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnerEnemy : MonoBehaviour
 {
+    [Header("Spawn Settings")]
     public GameObject spawnObject;
-    public Vector3 spawnPoint;
-    public int maxX = 10;
-    public int maxY = 10;
     public float timeTilNextSpawn = 1f;
-    int x = 0;
-    int y = 0;
-    float timer = 0;
+
+    [Header("Spawn Area")]
+    public int minX = -10;
+    public int maxX = 10;
+    public int minY = 12;
+    public int maxY = 15;
+
+    [Header("Enemy Sprites")]
+    public Sprite[] enemySprites;
+
+    private float timer;
+    private Transform player;
 
     void Start()
     {
-        timer = 0;
-        spawnPoint.x = x;
-        spawnPoint.y = y;
+        timer = 0f;
+
+        GameObject playerObj = GameObject.Find("Player");
+        if (playerObj != null)
+            player = playerObj.transform;
     }
 
-    private void Update()
+    void Update()
     {
+        if (player == null) return;
+
         timer += Time.deltaTime;
-        if (GameObject.Find("Player")) {
-            GameObject go = GameObject.Find("Player");
-            PlayerHealth cs = go.GetComponent<PlayerHealth>();
+
+        if (timer >= timeTilNextSpawn)
+        {
             Spawn();
+            timer = 0f;
         }
-       
     }
 
     void Spawn()
     {
+        Vector3 spawnPoint = new Vector3(
+            Random.Range(minX, maxX),
+            Random.Range(minY, maxY),
+            0f
+        );
 
+        GameObject enemy = Instantiate(spawnObject, spawnPoint, Quaternion.identity);
 
-        if (timer >= timeTilNextSpawn)
+        // RANDOM SPRITE
+        if (enemySprites.Length > 0)
         {
-            x = Random.Range(-10, maxX);
-            y = Random.Range(12, maxY);
-            spawnPoint.x = x;
-            spawnPoint.y = y;
-            Instantiate(spawnObject, spawnPoint, Quaternion.identity);
-            timer = 0;
+            SpriteRenderer sr = enemy.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sprite = enemySprites[Random.Range(0, enemySprites.Length)];
+            }
         }
     }
 }
